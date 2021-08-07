@@ -3,7 +3,6 @@ import sys
 import json
 import time
 import threading
-import subprocess
 
 version = "0.1.0"
 
@@ -74,9 +73,9 @@ class pynger:
 
 
     def ping(ip): # Pings ip and returns a boolean value corresponding to the response.
-        response = subprocess.check_output(["ping", pynger.argument, "1", ip])
+        response = os.popen(f"ping {pynger.argument} 1 {ip}").read()
 
-        if response == None:
+        if "unreachable" in response or "timed" in response:
             return False
 
         return True
