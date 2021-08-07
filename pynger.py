@@ -2,8 +2,8 @@ import os
 import sys
 import json
 import time
-import scapy.all as scapy
 import threading
+import subprocess
 
 version = "0.1.0"
 
@@ -13,12 +13,13 @@ whitelistFile = "whitelist.json"
 class pynger:
     whitelist = {}
     config = {
-        "timeout": 5,
         "minRefreshRate": 1
     }
 
     btwnTagAndStatus = 0
     amntDashEq = 0
+
+    argument = "-n" if os.name == "nt" else "-c"
 
     clearScreen = lambda: os.system("cls" if os.name == "nt" else "clear") # Makes sure clearing the screen won't throw errors, regardless of OS.
 
@@ -70,9 +71,7 @@ class pynger:
 
 
     def ping(ip): # Pings ip and returns a boolean value corresponding to the response.
-        icmp = scapy.IP(dst=ip)/scapy.ICMP()
-
-        response = scapy.sr1(icmp, verbose=False, timeout=pynger.config["timeout"])
+        response = subprocess.check_output(["ping", pynger.argument, "1", ip])
 
         if response == None:
             return False
