@@ -66,8 +66,8 @@ class pynger:
         for tag in pynger.whitelist:
             longestTagLength = len(tag) if len(tag) > longestTagLength else longestTagLength
 
-        pynger.btwnTagAndStatus = 5 + (longestTagLength - 7)
-        pynger.amntDashEq = 29 + (longestTagLength - 7)
+        pynger.btwnTagAndStatus = 7 + (longestTagLength - 7)
+        pynger.amntDashEq = 31 + (longestTagLength - 7)
 
         pynger.header = f"{'=' * pynger.amntDashEq}\nTAG{' ' * pynger.btwnTagAndStatus}STATUS     IP\n{'=' * pynger.amntDashEq}"
 
