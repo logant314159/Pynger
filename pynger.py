@@ -56,7 +56,8 @@ class pynger:
             pynger.config = json.load(cfg)
 
         with open(whitelistFile, "r") as wht:
-            pynger.whitelist = json.load(wht)
+            for key, value in sorted(json.load(wht).items()):
+                pynger.whitelist[key] = value
 
         longestTagLength = 0
         for tag in pynger.whitelist:
