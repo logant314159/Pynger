@@ -87,6 +87,7 @@ class pynger:
 
     def drawWhitelist(): # Clears the screen and then prints a pretty representation of each entry in the whitelist.
         pynger.clearScreen()
+        print(f"Pynger version {version}\n")
         print(pynger.header)
         
         for tag in pynger.whitelist:
@@ -123,28 +124,8 @@ class pynger:
 
 
 if __name__ == "__main__":
-    args = sys.argv[1:]
-    flags = ""
-    mode = ""
-
-    for arg in args:
-        if arg[0] == "-":
-            flags += arg[1:] # Only include the letters in the flags.
-        elif arg in ["monitor", "setup", "version"] and mode == "":
-            mode = arg
-        else:
-            print(f"Either an invalid argument passed, ({arg}) or you supplied more than one.")
-            sys.exit(1)
     try:
-        if mode == "monitor":
-            pynger.monitor()
-        elif mode == "setup":
-            pynger.setup()
-        elif mode == "version":
-            print(f"Pynger version {pynger.version}")
-        else:
-            print(f"I don't understand that mode: {mode}")
-            sys.exit(1)
+        pynger.monitor()
     except KeyboardInterrupt:
         pynger.clearScreen()
         sys.exit(0)
