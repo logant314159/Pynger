@@ -4,7 +4,7 @@ import json
 import time
 import threading
 
-version = "0.1.0"
+version = "0.2.0"
 
 configFile = "config.json"
 whitelistFile = "whitelist.json"
