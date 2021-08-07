@@ -91,7 +91,7 @@ class pynger:
         print(pynger.header)
         
         for tag in pynger.whitelist:
-            status = "[CONN]" if pynger.whitelist[tag][1] else "[DISC]"
+            status = "\033[92m[CONN]\033[0m" if pynger.whitelist[tag][1] else "\033[91m[DISC]\033[0m"
             pynger.btwnTagAndStatusFor = (pynger.btwnTagAndStatus + 3) - len(tag)
             print(f"{tag + ' ' * pynger.btwnTagAndStatusFor + status}     {pynger.whitelist[tag][0]}")
             print("-" * pynger.amntDashEq)
