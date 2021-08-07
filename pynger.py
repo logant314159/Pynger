@@ -39,17 +39,20 @@ class pynger:
         with open(configFile, "w") as cfg:
             json.dump(pynger.config, cfg, indent=4)
 
-        whitelistEntries = []
+        entry = []
+        whitelistEntries = {}
         print("Please enter space seperated IPs and related tags. (i.e. '10.0.0.1 John')\nOnce you're done, hit enter.")
         while True:
             entry = input("> ").split(" ")
 
-            if entry == ['']:
-                with open(whitelistFile, "w") as whitel:
-                    json.dump(whitelistEntries, whitel, indent=4)
-                    return
+            if entry != ['']:
+                whitelistEntries[entry[1]] = [entry[0], False]
+            else:
+                break
 
-            whitelistEntries[entry[1]] = [entry[0], False]
+        with open(whitelistFile, "w") as whitel:
+            json.dump(whitelistEntries, whitel, indent=4)
+            return
 
 
     def loadFiles(): # Reads and parses the config and whitelist files. Then sets up spacing and the header for the whitelist board.
