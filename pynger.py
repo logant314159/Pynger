@@ -4,7 +4,7 @@ import json
 import time
 import threading
 
-version = "0.2.0"
+version = "0.2.1"
 
 configFile = "config.json"
 whitelistFile = "whitelist.json"
@@ -82,7 +82,14 @@ class pynger:
 
 
     def updateWhitelist(tag): # Pings a given entry in the whitelist and then updates it's status.
-        pynger.whitelist[tag][1] = pynger.ping(pynger.whitelist[tag][0])
+        for _ in range(3): # This makes sure
+            result = pynger.ping(pynger.whitelist[tag][0])
+            if result == False:
+                time.sleep(.1)
+                continue
+            break
+
+        pynger.whitelist[tag][1] = result
 
 
     def drawWhitelist(): # Clears the screen and then prints a pretty representation of each entry in the whitelist.
