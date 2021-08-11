@@ -3,8 +3,9 @@ import sys
 import json
 import time
 import threading
+import scapy.all as scapy
 
-version = "0.2.1"
+version = "0.3.1"
 
 configFile = "config.json"
 whitelistFile = "whitelist.json"
@@ -12,7 +13,8 @@ whitelistFile = "whitelist.json"
 class pynger:
     whitelist = {}
     config = {
-        "minRefreshRate": 1
+        "minRefreshRate": 1,
+        "timeout" : 2
     }
 
     btwnTagAndStatus = 0
@@ -81,13 +83,24 @@ class pynger:
         return True
 
 
+    def arp(ip): # Broadcasts an ARP request and returns a boolean corresponding to if the given ip responded or not.
+        arpLayer = scapy.ARP(pdst=ip)
+        return True if scapy.srp(scapy.Ether("ff:ff:ff:ff:ff:ff")/arpLayer, verbose=False, timeout=pynger.config["timeout"])[0] else False
+
+
     def updateWhitelist(tag): # Pings a given entry in the whitelist and then updates it's status.
-        for _ in range(3): # This makes sure
+        for _ in range(3): # This makes sure to get rid of false negatives by checking 3 times and taking any True as the truth.
             result = pynger.ping(pynger.whitelist[tag][0])
-            if result == False:
+            if result == True:
+                break
+            time.sleep(.1)                
+
+        if not result:
+            for _ in range(3):
+                result = pynger.arp(pynger.whitelist[tag][0])
+                if result == True:
+                    break
                 time.sleep(.1)
-                continue
-            break
 
         pynger.whitelist[tag][1] = result
 
