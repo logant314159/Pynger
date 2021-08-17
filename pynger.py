@@ -6,7 +6,7 @@ import threading
 import scapy.all as scapy
 from plyer import notification
 
-version = "0.4.0"
+version = "0.4.1"
 
 configFile = "config.json"
 whitelistFile = "whitelist.json"
