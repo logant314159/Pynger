@@ -4,17 +4,20 @@ import json
 import time
 import threading
 import scapy.all as scapy
+from plyer import notification
 
-version = "0.3.1"
+version = "0.4.0"
 
 configFile = "config.json"
 whitelistFile = "whitelist.json"
 
 class pynger:
+    notified = False
     whitelist = {}
     config = {
         "minRefreshRate": 1,
-        "timeout" : 2
+        "timeout" : 2,
+        "notifications": False
     }
 
     btwnTagAndStatus = 0
@@ -22,7 +25,7 @@ class pynger:
 
     argument = "-n" if os.name == "nt" else "-c"
 
-    clearScreen = lambda: os.system("cls" if os.name == "nt" else "clear") # Makes sure clearing the screen won't throw errors, regardless of OS.
+    clearScreen = lambda: print("-"*30)#os.system("cls" if os.name == "nt" else "clear") # Makes sure clearing the screen won't throw errors, regardless of OS.
 
     def isReady(): # Checks if the config and whitelist file exist and aren't empty.
         if os.path.exists(configFile) \
@@ -37,6 +40,10 @@ class pynger:
 
 
     def setup(): # Applies the default config to file, and begins a whitelist population prompt before applying that to file as well.
+        notifChoice = input("Would you like to be notified of devices coming online?")
+        if notifChoice[0].lower() == "y":
+            pynger.config["notifications"] = True
+        
         with open(configFile, "w") as cfg:
             json.dump(pynger.config, cfg, indent=4)
 
@@ -88,6 +95,19 @@ class pynger:
         return True if scapy.srp(scapy.Ether("ff:ff:ff:ff:ff:ff")/arpLayer, verbose=False, timeout=pynger.config["timeout"])[0] else False
 
 
+    def notify(tagList):
+        tagString = ""
+
+        if len(tagList) > 1:
+            for tag in tagList:
+                tagString += f"{tag}, "
+            tagString += "have"
+        else:
+            tagString = f"{tagList[0]} has"
+
+        notification.notify(title="Arpy", message=f"{tagString} connected.")
+
+
     def updateWhitelist(tag): # Pings a given entry in the whitelist and then updates it's status.
         for _ in range(3): # This makes sure to get rid of false negatives by checking 3 times and taking any True as the truth.
             result = pynger.ping(pynger.whitelist[tag][0])
@@ -130,6 +150,12 @@ class pynger:
         while True:
             threads = []
 
+            newlyOnline = []
+            beforeScans = {}
+
+            for tag in pynger.whitelist:
+                beforeScans[tag] = pynger.whitelist[tag][1]
+
             for tag in pynger.whitelist:
                 t = threading.Thread(target=pynger.updateWhitelist, args=((tag),))
                 t.start()
@@ -139,6 +165,13 @@ class pynger:
                 thread.join()
 
             pynger.drawWhitelist()
+
+            for tag in pynger.whitelist:
+                if pynger.whitelist[tag][1] == True and beforeScans[tag] == False:
+                    newlyOnline.append(tag)
+
+            if len(newlyOnline) != 0:
+                pynger.notify(newlyOnline)
 
             time.sleep(pynger.config["minRefreshRate"])
 
