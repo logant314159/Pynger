@@ -44,7 +44,7 @@ class pynger:
         if notifChoice[0].lower() == "y":
             pynger.config["notifications"] = True
         
-        with open(configFile, "w") as cfg:
+        with open(configFile, "a") as cfg:
             json.dump(pynger.config, cfg, indent=4)
 
         entry = []
@@ -58,7 +58,7 @@ class pynger:
             else:
                 break
 
-        with open(whitelistFile, "w") as whitel:
+        with open(whitelistFile, "a") as whitel:
             json.dump(whitelistEntries, whitel, indent=4)
             return
 
