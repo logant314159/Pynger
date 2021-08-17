@@ -25,7 +25,8 @@ class pynger:
 
     argument = "-n" if os.name == "nt" else "-c"
 
-    clearScreen = lambda: print("-"*30)#os.system("cls" if os.name == "nt" else "clear") # Makes sure clearing the screen won't throw errors, regardless of OS.
+    def clearScreen():
+        os.system("cls" if os.name == "nt" else "clear") # Makes sure clearing the screen won't throw errors, regardless of OS.
 
     def isReady(): # Checks if the config and whitelist file exist and aren't empty.
         if os.path.exists(configFile) \
